@@ -13,6 +13,7 @@ public class Post extends ParseObject {
     public static final String KEY_DESCRIPTION = "description";
     public static final String KEY_IMAGE = "image";
     public static final String KEY_USER = "user";
+    public static final String KEY_CREATED_KEY = "createdAt";
 
     // getstring is a method defined on the parseobject class. looks at it and pulls out hte attribute with name (KEY_DESCRIPTION)
     public String getDescription() {
