@@ -22,7 +22,7 @@ import com.parse.ParseQuery;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class PostsFragment extends Fragment {
 
@@ -30,6 +30,7 @@ public class PostsFragment extends Fragment {
     private RecyclerView rvPosts;
     protected PostsAdapter adapter;
     protected List<Post> allPosts;
+    SwipeRefreshLayout swipeContainer;
 
     public PostsFragment() {
         // reuqired empty public constructor
@@ -47,6 +48,20 @@ public class PostsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         rvPosts = view.findViewById(R.id.rvPosts);
+
+        // implementing pull to refresh
+        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer); //implement layout swipecontainer
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Log.i(TAG, "fetching new data from refresh!"); // new data fetching method is already implemented down there and we re-use it.
+                queryPosts();
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                // fetchTimelineAsync(0); <- queryPosts()
+            }
+        });
 
         allPosts = new ArrayList<>();
         // use the PostsAdapter class and constructor
@@ -80,11 +95,13 @@ public class PostsFragment extends Fragment {
                     return;
                 }
 
+                adapter.clear();
                 for (Post post: posts) {
                     Log.i(TAG, "Post: " + post.getDescription() + ", username: " + post.getUser().getUsername());
                 }
                 allPosts.addAll(posts);
-                adapter.notifyDataSetChanged();
+                swipeContainer.setRefreshing(false);
+                // adapter.notifyDataSetChanged();
             }
         });
     }
